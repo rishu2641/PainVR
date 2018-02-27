@@ -1,12 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-//needed to change scenes
 using UnityEngine.SceneManagement;
 
 public class ChangeScenes : MonoBehaviour {
 
+	public string scene;
 	// Use this for initialization
 	void Start () {
 	
@@ -19,10 +18,9 @@ public class ChangeScenes : MonoBehaviour {
 
     //function to change scenes
     //replace SceneName with name of scene you want to change to
-    /*
-    void changeScene()
-    {
-        SceneManager.LoadScene("SceneName");
+    
+    public void changeScene(string scene){
+        SceneManager.LoadScene(scene);
     }
-    */
+    
 }

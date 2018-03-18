@@ -5,15 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: 
-    guid: 36c0d9e2edd6e554992be5aeb3f62d75
   - enabled: 1
-    path: Assets/Scenes/DemoStart.unity
-    guid: c8da3816e39379744a3d6a37a87cf049
+    path: Assets/Scenes/MainMenu.unity
+    guid: fec204e868425b04786c08b82b2aa1b4
   - enabled: 1
     path: Assets/Scenes/DemoHouseCheese.unity
     guid: 801f3355e1c3aec4f82c3756c5390a2d
   - enabled: 1
     path: Assets/Scenes/DemoHouseApple.unity
     guid: fd7b14ee1076f4b4ebf5d5e399b074fd
+  - enabled: 1
+    path: Assets/Scenes/Slider.unity
+    guid: 0a70e3eeda6409a48a3e4faae7432735

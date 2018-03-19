@@ -17,3 +17,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Slider.unity
     guid: 0a70e3eeda6409a48a3e4faae7432735
+  - enabled: 1
+    path: Assets/Scenes/SuperMarket-Apple.unity
+    guid: 00000000000000000000000000000000

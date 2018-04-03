@@ -11,7 +11,7 @@ public class ToggleSlider : MonoBehaviour {
 
 	public void toggleAndIncrement(){
 		canvas.SetActive(true);
-		sliderText.text = sliderText.text.toInteger() + 1;
+		sliderText.text = int.Parse(sliderText.text + 1).ToString();
 
 	}
 	// Use this for initialization

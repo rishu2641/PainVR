@@ -19,7 +19,7 @@ public class InitializePatientFile : MonoBehaviour {
 			string strPath = Environment.GetFolderPath(
                          System.Environment.SpecialFolder.DesktopDirectory);
 	 		System.IO.File.WriteAllText(strPath + "\\Patient_" + patientName + "_Opal_Testing.csv", "Patient's Name:,"+patientName+",\n" + ",,\n" + "Scene,Time,Anxiety Level\n");
-			SceneManager.LoadScene("apple-1-supermarket");
+			SceneManager.LoadScene("Tutorial");
 		}
 	}
 }

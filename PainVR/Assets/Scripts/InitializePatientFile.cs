@@ -11,6 +11,7 @@ public class InitializePatientFile : MonoBehaviour {
 
 	public InputField iField;
 	public string patientName;
+	public string patientFile;
 
 	public void StartPatientFile(){
 		patientName = iField.text;
@@ -18,7 +19,12 @@ public class InitializePatientFile : MonoBehaviour {
 			patientName = patientName.Trim().Replace(" ", "_");
 			string strPath = Environment.GetFolderPath(
                          System.Environment.SpecialFolder.DesktopDirectory);
-	 		System.IO.File.WriteAllText(strPath + "\\Patient_" + patientName + "_Opal_Testing.csv", "Patient's Name:,"+patientName+",\n" + ",,\n" + "Scene,Time,Anxiety Level\n");
+	 		patientFile = strPath + "\\Patient_" + patientName + "_Shuffled_OPAL_Testing.csv";
+	 		GlobalVariables.Filename = patientFile;
+	 		GlobalVariables.Patientname = patientName;
+	 		System.IO.File.WriteAllText(patientFile, 
+	 									"Patient's Name:,"+patientName+",,,\n" + ",,,,\n" + "Time,Scene,Anxiety Level,Scene, Average Anxiety Level");
+			
 			SceneManager.LoadScene("apple-1-supermarket");
 		}
 	}

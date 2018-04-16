@@ -26,6 +26,10 @@ public class ToggleSlider : MonoBehaviour {
 	public int minValue = 0;
 	int val = 50;
 
+	//logging to csv variables
+	string fileText = System.IO.File.ReadAllText(GlobalVariables.Filename);
+	List<int> tempStats = new List<int>();
+
 	public static double ConvertToUnixTimestamp(DateTime date){
 	    DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 	    TimeSpan diff = date.ToUniversalTime() - origin;
@@ -58,8 +62,23 @@ public class ToggleSlider : MonoBehaviour {
 		slider.value = val;
 		isActive = true;
 	}
+
+	public void LogToFile(){
+		tempStats.Add(Convert.ToInt32(Math.Round(slider.value)));
+		fileText += "\n" + Math.Floor(Time.time) + "," + scenes[sceneCount] + "," + slider.value + ",,";
+	}
+
+	public string AverageAnxietyLevels(){
+		double sum = 0;
+		for (int i = 0; i < tempStats.Count; i++){
+			sum += tempStats[i];
+		}
+		return Math.Floor(sum/tempStats.Count).ToString();
+	}
 	// Use this for initialization
 	void Start () {
+		tempStats.Clear();
+		InvokeRepeating("LogToFile", 1.0f, 2.0f);
 		slider.value = 50;
 	}
 	
@@ -97,9 +116,13 @@ public class ToggleSlider : MonoBehaviour {
 				belowThreshold = true;
 		}
 		if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTime >= 5 && belowThreshold){
+			
+			string average = AverageAnxietyLevels();
+			fileText = fileText.Substring(0, fileText.Length-1) + scenes[sceneCount] + "," + average;
+			System.IO.File.WriteAllText(GlobalVariables.Filename, fileText);
 			sceneCount++;
 			if(sceneCount >= scenes.Length || sceneCount < 0){
-				sceneCount =0;
+				sceneCount = 0;
 			}
 			SceneManager.LoadScene(scenes[sceneCount]);
 		}

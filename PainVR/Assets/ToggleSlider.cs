@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Linq;
 using UnityEngine.SceneManagement;
 
 public class ToggleSlider : MonoBehaviour {
@@ -12,9 +13,9 @@ public class ToggleSlider : MonoBehaviour {
 	public GameObject tutorialCanvas3;
 	double belowThresholdTimeTutorial;
 	bool belowThresholdTutorial	= true;
-	bool stepOne = true;
-	bool stepTwo = false;
-	bool TutorialDone = false;
+	static public bool stepOne = true;
+	static public bool stepTwo = false;
+	static public bool TutorialDone = false;
 	public Rigidbody tutorialSphere;
 	public int threshold = 20;
 	public GameObject canvas;
@@ -32,6 +33,11 @@ public class ToggleSlider : MonoBehaviour {
 	int val = 50;
 	string fileText = System.IO.File.ReadAllText(GlobalVariables.Filename);
 	List<int> tempStats = new List<int>();
+	static public bool isRandomized = false;
+	static public string[] copyOfScenesArray = new string[GlobalVariables.Scenes.Length-1];
+	public Scene scene;
+	
+
 
 	//note to future self: Learn about C#'s Time.time
 	public static double ConvertToUnixTimestamp(DateTime date){
@@ -69,7 +75,7 @@ public class ToggleSlider : MonoBehaviour {
 	//called every 2 seconds to log current anxiety level to file.
 	public void LogToFile(){
 		tempStats.Add(Convert.ToInt32(Math.Round(slider.value)));
-		fileText += "\n" + Math.Floor(Time.time) + "," + GlobalVariables.Scenes[sceneCount] + "," + slider.value + ",,";
+		fileText += "\n" + Math.Floor(Time.time) + "," + copyOfScenesArray[sceneCount] + "," + slider.value + ",,";
 	}
 
 	public string AverageAnxietyLevels(){
@@ -79,19 +85,38 @@ public class ToggleSlider : MonoBehaviour {
 		}
 		return Math.Floor(sum/tempStats.Count).ToString();
 	}
+
+	public string[] randomizeScenes(){
+		System.Random rnd=new System.Random();
+
+		return GlobalVariables.Scenes.Skip(1).ToArray().OrderBy(x => rnd.Next()).ToArray();   
+	}
 	// Use this for initialization
 	void Start () {
+		scene = SceneManager.GetActiveScene();
+		Debug.Log(scene.name);
+		if(!isRandomized){
+			copyOfScenesArray = randomizeScenes();
+			isRandomized = true;
+			for(int i = 0; i < copyOfScenesArray.Length; i++){
+				Debug.Log(copyOfScenesArray[i]);
+			}
+		}
 		tempStats.Clear();
-		InvokeRepeating("LogToFile", 1.0f, GlobalVariables.SampleRate);
+		if(scene.name != "Tutorial"){
+			InvokeRepeating("LogToFile", 1.0f, GlobalVariables.SampleRate);
+			Debug.Log("started logging");
+		}
 		slider.value = 50;
 		belowThresholdTutorial	= true;
-		stepOne = true;
-		stepTwo = false;
-		TutorialDone = false;
+		//stepOne = true;
+		//stepTwo = false;
+		//TutorialDone = false;
 	}
 
 	// Update is called once per frame
 	void Update () {
+
 		if(OVRInput.GetDown(OVRInput.Button.One)){
 			heldTimeA = ConvertToUnixTimestamp(DateTime.Now);
 			toggleAndIncrement();
@@ -146,6 +171,7 @@ public class ToggleSlider : MonoBehaviour {
 			TutorialDone = true;
 		}
 		if(TutorialDone){
+			Debug.Log("tutorial done part of if statement god damnit");
 			//scene transitioning
 			if(val >= threshold){
 				belowThreshold = false;
@@ -155,14 +181,22 @@ public class ToggleSlider : MonoBehaviour {
 					belowThreshold = true;
 			}
 			if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTime >= GlobalVariables.TimeTillNextScene && belowThreshold){
-				string average = AverageAnxietyLevels();
-				fileText = fileText.Substring(0, fileText.Length-1) + GlobalVariables.Scenes[sceneCount] + "," + average;
-				System.IO.File.WriteAllText(GlobalVariables.Filename, fileText);
-				sceneCount++;
-				if(sceneCount >= GlobalVariables.Scenes.Length || sceneCount < 0){
-					sceneCount =0;
+				Debug.Log("start scene transition");
+
+				if(scene.name != "Tutorial")
+				{
+					Debug.Log("not in tutorial, so write to file");
+					string average = AverageAnxietyLevels();
+					fileText = fileText.Substring(0, fileText.Length-1) + copyOfScenesArray[sceneCount] + "," + average;
+					System.IO.File.WriteAllText(GlobalVariables.Filename, fileText);
+					sceneCount++;
 				}
-				SceneManager.LoadScene(GlobalVariables.Scenes[sceneCount]);
+				if(sceneCount >= copyOfScenesArray.Length || sceneCount < 0){
+					Debug.Log("sceneCount is massive for some reason");
+					sceneCount = 0;
+				}
+				Debug.Log("Load scene: " + sceneCount);
+				SceneManager.LoadScene(copyOfScenesArray[sceneCount]);
 			}
 		}
 	}

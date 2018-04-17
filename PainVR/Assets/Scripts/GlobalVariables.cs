@@ -9,7 +9,7 @@ public static class GlobalVariables
 {
 	private static string strPath = Environment.GetFolderPath(
                          System.Environment.SpecialFolder.DesktopDirectory);
-    private static string filename = strPath + "\\Patient_Default_Opal_Testing.csv";
+    private static string filename = strPath + "\\Patient_Default_Shuffled_OPAL_Testing.csv";
     private static string patientname;
     public static string Filename 
     {

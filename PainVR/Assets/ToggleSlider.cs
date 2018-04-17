@@ -6,6 +6,8 @@ using System;
 using System.Linq;
 using UnityEngine.SceneManagement;
 
+/* We apologize in advance for not separating some of this functionality */
+
 public class ToggleSlider : MonoBehaviour {
 
 	public GameObject tutorialCanvas1;
@@ -88,7 +90,6 @@ public class ToggleSlider : MonoBehaviour {
 
 	public string[] randomizeScenes(){
 		System.Random rnd=new System.Random();
-
 		return GlobalVariables.Scenes.Skip(1).ToArray().OrderBy(x => rnd.Next()).ToArray();   
 	}
 	// Use this for initialization
@@ -103,15 +104,12 @@ public class ToggleSlider : MonoBehaviour {
 			}
 		}
 		tempStats.Clear();
-		if(scene.name != "Tutorial"){
+		if(scene.name != "Tutorial" && scene.name != "Welcome"){
 			InvokeRepeating("LogToFile", 1.0f, GlobalVariables.SampleRate);
 			Debug.Log("started logging");
 		}
 		slider.value = 50;
 		belowThresholdTutorial	= true;
-		//stepOne = true;
-		//stepTwo = false;
-		//TutorialDone = false;
 	}
 
 	// Update is called once per frame
@@ -171,7 +169,6 @@ public class ToggleSlider : MonoBehaviour {
 			TutorialDone = true;
 		}
 		if(TutorialDone){
-			Debug.Log("tutorial done part of if statement god damnit");
 			//scene transitioning
 			if(val >= threshold){
 				belowThreshold = false;
@@ -181,21 +178,16 @@ public class ToggleSlider : MonoBehaviour {
 					belowThreshold = true;
 			}
 			if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTime >= GlobalVariables.TimeTillNextScene && belowThreshold){
-				Debug.Log("start scene transition");
-
-				if(scene.name != "Tutorial")
+				if(scene.name != "Tutorial" && scene.name != "Welcome")
 				{
-					Debug.Log("not in tutorial, so write to file");
 					string average = AverageAnxietyLevels();
 					fileText = fileText.Substring(0, fileText.Length-1) + copyOfScenesArray[sceneCount] + "," + average;
 					System.IO.File.WriteAllText(GlobalVariables.Filename, fileText);
 					sceneCount++;
 				}
 				if(sceneCount >= copyOfScenesArray.Length || sceneCount < 0){
-					Debug.Log("sceneCount is massive for some reason");
 					sceneCount = 0;
 				}
-				Debug.Log("Load scene: " + sceneCount);
 				SceneManager.LoadScene(copyOfScenesArray[sceneCount]);
 			}
 		}

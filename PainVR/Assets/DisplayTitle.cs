@@ -11,7 +11,7 @@ public class DisplayTitle : MonoBehaviour {
 	}
 	// Use this for initialization
 	void Start () {
-		Invoke("closeCanvas", 5);
+		Invoke("closeCanvas", 10);
 	}
 	
 	// Update is called once per frame

@@ -37,7 +37,7 @@ public class ToggleSlider : MonoBehaviour {
 	string fileText = System.IO.File.ReadAllText(GlobalVariables.Filename);
 	List<int> tempStats = new List<int>();
 	static public bool isRandomized = false;
-	static public string[] copyOfScenesArray = new string[GlobalVariables.Scenes.Length-1];
+	static public string[] copyOfScenesArray = new string[GlobalVariables.Scenes.Length];
 	public Scene scene;
 
 
@@ -93,7 +93,7 @@ public class ToggleSlider : MonoBehaviour {
 
 	public string[] randomizeScenes(){
 		System.Random rnd=new System.Random();
-		return GlobalVariables.Scenes.Skip(1).ToArray().OrderBy(x => rnd.Next()).ToArray();
+		return GlobalVariables.Scenes.OrderBy(x => rnd.Next()).ToArray();
 	}
 	// Use this for initialization
 	void Start () {
@@ -184,7 +184,9 @@ public class ToggleSlider : MonoBehaviour {
 				if(scene.name != "Tutorial" && scene.name != "Welcome")
 				{
 					string average = AverageAnxietyLevels();
-					fileText = fileText.Substring(0, fileText.Length-1) + copyOfScenesArray[sceneCount] + "," + average;
+					if(!done){
+						fileText = fileText.Substring(0, fileText.Length-1) + copyOfScenesArray[sceneCount] + "," + average;
+					}
 					System.IO.File.WriteAllText(GlobalVariables.Filename, fileText);
 					sceneCount++;
 				}

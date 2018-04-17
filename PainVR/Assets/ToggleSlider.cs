@@ -18,6 +18,7 @@ public class ToggleSlider : MonoBehaviour {
 	static public bool stepOne = true;
 	static public bool stepTwo = false;
 	static public bool TutorialDone = false;
+	static public bool done = false;
 	public Rigidbody tutorialSphere;
 	public int threshold = 20;
 	public GameObject canvas;
@@ -38,7 +39,7 @@ public class ToggleSlider : MonoBehaviour {
 	static public bool isRandomized = false;
 	static public string[] copyOfScenesArray = new string[GlobalVariables.Scenes.Length-1];
 	public Scene scene;
-	
+
 
 
 	//note to future self: Learn about C#'s Time.time
@@ -77,7 +78,9 @@ public class ToggleSlider : MonoBehaviour {
 	//called every 2 seconds to log current anxiety level to file.
 	public void LogToFile(){
 		tempStats.Add(Convert.ToInt32(Math.Round(slider.value)));
-		fileText += "\n" + Math.Floor(Time.time) + "," + copyOfScenesArray[sceneCount] + "," + slider.value + ",,";
+		if(!done){
+			fileText += "\n" + Math.Floor(Time.time) + "," + copyOfScenesArray[sceneCount] + "," + slider.value + ",,";
+		}
 	}
 
 	public string AverageAnxietyLevels(){
@@ -90,7 +93,7 @@ public class ToggleSlider : MonoBehaviour {
 
 	public string[] randomizeScenes(){
 		System.Random rnd=new System.Random();
-		return GlobalVariables.Scenes.Skip(1).ToArray().OrderBy(x => rnd.Next()).ToArray();   
+		return GlobalVariables.Scenes.Skip(1).ToArray().OrderBy(x => rnd.Next()).ToArray();
 	}
 	// Use this for initialization
 	void Start () {
@@ -186,9 +189,15 @@ public class ToggleSlider : MonoBehaviour {
 					sceneCount++;
 				}
 				if(sceneCount >= copyOfScenesArray.Length || sceneCount < 0){
-					sceneCount = 0;
+					done = true;
 				}
-				SceneManager.LoadScene(copyOfScenesArray[sceneCount]);
+				if(done){
+					SceneManager.LoadScene("Goodbye");
+				}
+				else{
+					SceneManager.LoadScene(copyOfScenesArray[sceneCount]);
+				}
+
 			}
 		}
 	}

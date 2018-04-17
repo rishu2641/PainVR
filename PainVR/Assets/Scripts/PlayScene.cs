@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class PlayScene : MonoBehaviour {
     public GameObject camera;
     public GameObject canvas;
@@ -15,7 +16,9 @@ public class PlayScene : MonoBehaviour {
 	void Start () {
 		canvas = GameObject.Find("Interface");
         canvas.SetActive(false);
-		StartCoroutine(ExecuteAfterTime(15));	
+		StartCoroutine(ExecuteAfterTime(15));
+   
+
 	}
 	
 	// Update is called once per frame
@@ -28,3 +31,4 @@ public class PlayScene : MonoBehaviour {
 
 	 }
 }
+

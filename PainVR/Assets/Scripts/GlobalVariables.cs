@@ -8,7 +8,7 @@ using System;
 public static class GlobalVariables
 {
     //Initialize array of scenes here:
-   public static string[] scenes = {"apple-1-supermarket", "apple-2-supermarket", "apple-3-cafeteria", "apple-4-cafeteria", "apple-5-cafeteria","apple-6-cafeteria","cheese-1-supermarket","cheese-2-reception","cheese-3-reception","cheese-4-reception","cheese-5-reception"};
+   public static string[] scenes = {"apple-1-supermarket", "apple-2-supermarket", "apple-3-cafeteria", "apple-4-cafeteria", "apple-5-cafeteria","apple-6-cafeteria","cheese-1-supermarket"};
 
     //strPath holds path to user's desktop
     private static string strPath = Environment.GetFolderPath(

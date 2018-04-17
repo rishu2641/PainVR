@@ -25,7 +25,7 @@ public class InitializePatientFile : MonoBehaviour {
 	 		System.IO.File.WriteAllText(patientFile, 
 	 									"Patient's Name:,"+patientName+",,,\n" + ",,,,\n" + "Time,Scene,Anxiety Level,Scene, Average Anxiety Level");
 			
-			SceneManager.LoadScene("apple-1-supermarket");
+			SceneManager.LoadScene("Tutorial");
 		}
 	}
 }

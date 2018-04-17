@@ -169,6 +169,7 @@ public class ToggleSlider : MonoBehaviour {
 					sceneCount =0;
 				}
 				SceneManager.LoadScene(scenes[sceneCount]);
+			}
 		}
 	}
 

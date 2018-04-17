@@ -16,30 +16,24 @@ public class ToggleSlider : MonoBehaviour {
 	bool stepTwo = false;
 	bool TutorialDone = false;
 	public Rigidbody tutorialSphere;
-
 	public int threshold = 20;
 	public GameObject canvas;
 	public Text sliderText;
 	public Slider slider;
-	public static string[] scenes = {"Tutorial", "apple-1-supermarket", "apple-2-supermarket", "apple-3-cafeteria", "apple-4-cafeteria", "apple-5-cafeteria","apple-6-cafeteria"};
 	double startingtime;
 	double heldTimeA;
 	double heldTimeB;
-
-	//scene transition variables
 	double belowThresholdTime;
 	bool belowThreshold = false;
 	static public int sceneCount = 0;
-
 	bool isActive;
 	public int maxValue = 100;
 	public int minValue = 0;
 	int val = 50;
-
-	//logging to csv variables
 	string fileText = System.IO.File.ReadAllText(GlobalVariables.Filename);
 	List<int> tempStats = new List<int>();
 
+	//note to future self: Learn about C#'s Time.time
 	public static double ConvertToUnixTimestamp(DateTime date){
 	    DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 	    TimeSpan diff = date.ToUniversalTime() - origin;
@@ -72,10 +66,10 @@ public class ToggleSlider : MonoBehaviour {
 		slider.value = val;
 		isActive = true;
 	}
-
+	//called every 2 seconds to log current anxiety level to file.
 	public void LogToFile(){
 		tempStats.Add(Convert.ToInt32(Math.Round(slider.value)));
-		fileText += "\n" + Math.Floor(Time.time) + "," + scenes[sceneCount] + "," + slider.value + ",,";
+		fileText += "\n" + Math.Floor(Time.time) + "," + GlobalVariables.Scenes[sceneCount] + "," + slider.value + ",,";
 	}
 
 	public string AverageAnxietyLevels(){
@@ -88,7 +82,7 @@ public class ToggleSlider : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		tempStats.Clear();
-		InvokeRepeating("LogToFile", 1.0f, 2.0f);
+		InvokeRepeating("LogToFile", 1.0f, GlobalVariables.SampleRate);
 		slider.value = 50;
 		belowThresholdTutorial	= true;
 		stepOne = true;
@@ -129,7 +123,7 @@ public class ToggleSlider : MonoBehaviour {
 				belowThresholdTimeTutorial = ConvertToUnixTimestamp(DateTime.Now);
 				belowThresholdTutorial	= false;
 			}
-			if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTimeTutorial >= 5 && !belowThresholdTutorial){
+			if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTimeTutorial >= 2 && !belowThresholdTutorial){
 				tutorialCanvas1.SetActive(false);
 				tutorialCanvas2.SetActive(true);
 				tutorialCanvas3.SetActive(false);
@@ -160,15 +154,15 @@ public class ToggleSlider : MonoBehaviour {
 					belowThresholdTime = ConvertToUnixTimestamp(DateTime.Now);
 					belowThreshold = true;
 			}
-			if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTime >= 5 && belowThreshold){
+			if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTime >= GlobalVariables.TimeTillNextScene && belowThreshold){
 				string average = AverageAnxietyLevels();
-				fileText = fileText.Substring(0, fileText.Length-1) + scenes[sceneCount] + "," + average;
+				fileText = fileText.Substring(0, fileText.Length-1) + GlobalVariables.Scenes[sceneCount] + "," + average;
 				System.IO.File.WriteAllText(GlobalVariables.Filename, fileText);
 				sceneCount++;
-				if(sceneCount >= scenes.Length || sceneCount < 0){
+				if(sceneCount >= GlobalVariables.Scenes.Length || sceneCount < 0){
 					sceneCount =0;
 				}
-				SceneManager.LoadScene(scenes[sceneCount]);
+				SceneManager.LoadScene(GlobalVariables.Scenes[sceneCount]);
 			}
 		}
 	}

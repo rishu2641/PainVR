@@ -7,19 +7,29 @@ using UnityEngine.SceneManagement;
 
 public class ToggleSlider : MonoBehaviour {
 
+	public GameObject tutorialCanvas1;
+	public GameObject tutorialCanvas2;
+	public GameObject tutorialCanvas3;
+	double belowThresholdTimeTutorial;
+	bool belowThresholdTutorial	= true;
+	bool stepOne = true;
+	bool stepTwo = false;
+	bool TutorialDone = false;
+	public Rigidbody tutorialSphere;
+
 	public int threshold = 20;
 	public GameObject canvas;
 	public Text sliderText;
 	public Slider slider;
-	public string[] scenes = {"apple-1-supermarket", "apple-2-supermarket", "apple-3-cafeteria", "apple-4-cafeteria", "apple-5-cafeteria","apple-6-cafeteria"};
+	public static string[] scenes = {"Tutorial", "apple-1-supermarket", "apple-2-supermarket", "apple-3-cafeteria", "apple-4-cafeteria", "apple-5-cafeteria","apple-6-cafeteria"};
 	double startingtime;
 	double heldTimeA;
 	double heldTimeB;
-	
+
 	//scene transition variables
 	double belowThresholdTime;
 	bool belowThreshold = false;
-	static public int sceneCount;
+	static public int sceneCount = 0;
 
 	bool isActive;
 	public int maxValue = 100;
@@ -80,8 +90,12 @@ public class ToggleSlider : MonoBehaviour {
 		tempStats.Clear();
 		InvokeRepeating("LogToFile", 1.0f, 2.0f);
 		slider.value = 50;
+		belowThresholdTutorial	= true;
+		stepOne = true;
+		stepTwo = false;
+		TutorialDone = false;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		if(OVRInput.GetDown(OVRInput.Button.One)){
@@ -107,24 +121,54 @@ public class ToggleSlider : MonoBehaviour {
         	isActive = false;
 		}
 
-		//scene transitioning
-		if(val >= 20){
-			belowThreshold = false;
-		}
-		if(val < 20 && !belowThreshold){
-				belowThresholdTime = ConvertToUnixTimestamp(DateTime.Now);
-				belowThreshold = true;
-		}
-		if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTime >= 5 && belowThreshold){
-			
-			string average = AverageAnxietyLevels();
-			fileText = fileText.Substring(0, fileText.Length-1) + scenes[sceneCount] + "," + average;
-			System.IO.File.WriteAllText(GlobalVariables.Filename, fileText);
-			sceneCount++;
-			if(sceneCount >= scenes.Length || sceneCount < 0){
-				sceneCount = 0;
+		if(sceneCount == 0 && stepOne){
+			if(val < 100){
+				belowThresholdTutorial = true;
 			}
-			SceneManager.LoadScene(scenes[sceneCount]);
+			if(val >= 100 && belowThresholdTutorial){
+				belowThresholdTimeTutorial = ConvertToUnixTimestamp(DateTime.Now);
+				belowThresholdTutorial	= false;
+			}
+			if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTimeTutorial >= 5 && !belowThresholdTutorial){
+				tutorialCanvas1.SetActive(false);
+				tutorialCanvas2.SetActive(true);
+				tutorialCanvas3.SetActive(false);
+				stepTwo	= true;
+				stepOne = false;
+				TutorialDone = false;
+			}
+		}
+		else if(stepTwo){
+			if(tutorialSphere.isKinematic){
+				tutorialCanvas1.SetActive(false);
+				tutorialCanvas2.SetActive(false);
+				tutorialCanvas3.SetActive(true);
+				stepTwo	= false;
+				stepOne = false;
+				TutorialDone = true;
+			}
+		}
+		else {
+			TutorialDone = true;
+		}
+		if(TutorialDone){
+			//scene transitioning
+			if(val >= threshold){
+				belowThreshold = false;
+			}
+			if(val < threshold && !belowThreshold){
+					belowThresholdTime = ConvertToUnixTimestamp(DateTime.Now);
+					belowThreshold = true;
+			}
+			if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTime >= 5 && belowThreshold){
+				string average = AverageAnxietyLevels();
+				fileText = fileText.Substring(0, fileText.Length-1) + scenes[sceneCount] + "," + average;
+				System.IO.File.WriteAllText(GlobalVariables.Filename, fileText);
+				sceneCount++;
+				if(sceneCount >= scenes.Length || sceneCount < 0){
+					sceneCount =0;
+				}
+				SceneManager.LoadScene(scenes[sceneCount]);
 		}
 	}
 

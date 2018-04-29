@@ -54,7 +54,7 @@ public class ToggleSlider : MonoBehaviour {
 	double belowThresholdTime;
 	bool belowThreshold = false;
 
-	//scene count used for logging purposes
+	//scene count
 	public int sceneCount = 0;
 
 	//current text in patient's file (GlobalVariables.Filename returns directory to file in desktop)
@@ -106,7 +106,7 @@ public class ToggleSlider : MonoBehaviour {
 	public void LogToFile(){
 		tempStats.Add(Convert.ToInt32(Math.Round(slider.value)));
 		if(!done){
-			fileText += "\n" + Math.Floor(Time.time) + "," + copyOfScenesArray[sceneCount] + "," + slider.value + ",,";
+			fileText += "\n" + Math.Floor(Time.time) + "," + copyOfScenesArray[sceneCount-1] + "," + slider.value + ",,";
 		}
 	}
 
@@ -126,6 +126,7 @@ public class ToggleSlider : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		scene = SceneManager.GetActiveScene();
+		sceneCount = Array.IndexOf(copyOfScenesArray, scene.name) + 1;
 		Debug.Log(scene.name);
 		if(!isRandomized){
 			copyOfScenesArray = randomizeScenes();
@@ -145,7 +146,19 @@ public class ToggleSlider : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+			
+		//keyboard shortcuts to manipulate anxiety slider
+		if(Input.GetKey("1")){
+			toggleAndIncrement();
+		}
+		if(Input.GetKey("2")){
+			toggleAndDecrement();
+		}
 
+		//keyboard shortcut to skip tutorial
+		if(Input.GetKey("9") && scene.name == "Tutorial"){
+			TutorialDone = true;
+		}
 
 		/* 1. Handles Oculus touch input and incrementing/decrementing anxiety value */
 		if(OVRInput.GetDown(OVRInput.Button.One)){
@@ -173,8 +186,8 @@ public class ToggleSlider : MonoBehaviour {
 		}
 
 
-		/* 3. Following code is solely used for tutorial scene, should move it out of Update() lol */
-		if(sceneCount == 0 && stepOne){
+		/* 3. Following code is solely used for tutorial scene, should DEFINITELY move it out of Update() and to a tutorial-specific script */
+		if(stepOne){
 			if(val < 100){
 				belowThresholdTutorial = true;
 			}
@@ -228,10 +241,9 @@ public class ToggleSlider : MonoBehaviour {
 					string average = AverageAnxietyLevels();
 					if(!done)
 					{
-						fileText = fileText.Substring(0, fileText.Length-1) + copyOfScenesArray[sceneCount] + "," + average;
+						fileText = fileText.Substring(0, fileText.Length-1) + copyOfScenesArray[sceneCount-1] + "," + average;
 					}
 					System.IO.File.WriteAllText(GlobalVariables.Filename, fileText);
-					sceneCount++;
 				}
 				if(sceneCount >= copyOfScenesArray.Length || sceneCount < 0)
 				{

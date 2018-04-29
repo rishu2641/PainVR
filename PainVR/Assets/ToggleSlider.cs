@@ -186,7 +186,7 @@ public class ToggleSlider : MonoBehaviour {
 		}
 
 
-		/* 3. Following code is solely used for tutorial scene, should DEFINITELY move it out of Update() and to a tutorial-specific script */
+		/* 3. Following code is solely used for tutorial scene, should move it out of Update() and to a tutorial-specific script */
 		if(stepOne){
 			if(val < 100){
 				belowThresholdTutorial = true;

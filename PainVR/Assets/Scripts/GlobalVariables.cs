@@ -26,6 +26,17 @@ public static class GlobalVariables
     //How long anxiety level needs to be below threshold before transitioning to next scene.
     private static int timeTillNextScene = 5;
 
+    //scene instruction hash map. Keys are scene names, values are instructions to display.
+    public static Dictionary<string, string> SceneInstructions = new Dictionary<string, string>
+        {
+            { "apple-1-supermarket", "You walk into the supermarket to start your grocery shopping. Look for the produce aisle!" },
+            { "apple-2-supermarket", "You've found yourself in the produce aisle. Feel free to approach the apples and gauge your anxiety level." },
+            { "apple-3-cafeteria", "Welcome to the cafeteria. Take a look at what's for lunch!" },
+            { "apple-4-cafeteria", "Good to see your coworkers eating healthy. How do you feel about their choice?" },
+            { "apple-5-cafeteria", "You're sitting down to eat with your coworker. Hope you don't mind the crunch!" },
+            { "apple-6-cafeteria", "Engaged in conversation with your coworker, you decide to eat your apple." },
+            { "cheese-1-supermarket", "During your grocery shopping, you arrive at the cheese aisle. Take a look!" },
+        };
     //call GlobalVariables.Filename to return path+filename
     public static string Filename 
     {
@@ -89,4 +100,5 @@ public static class GlobalVariables
             timeTillNextScene = value;
         }
     }
+
 }

@@ -10,6 +10,8 @@ using UnityEngine.SceneManagement;
 
 public class ToggleSlider : MonoBehaviour {
 
+	/* Global variables needed for Tutorial scene */
+
 	public GameObject tutorialCanvas1;
 	public GameObject tutorialCanvas2;
 	public GameObject tutorialCanvas3;
@@ -21,20 +23,44 @@ public class ToggleSlider : MonoBehaviour {
 	static public bool done = false;
 	public Rigidbody tutorialSphere;
 	public int threshold = 20;
+
+	/* Global variables for the anxiety slider */
+
+	//anxiety slider canvas
 	public GameObject canvas;
+
+	//anxiety slider text
 	public Text sliderText;
+
+	//the anxiety slider
 	public Slider slider;
+
+	//is the anxiety canvas active?
+	bool isActive;
+
+	//max value of slider
+	public int maxValue = 100;
+
+	//min value of slider
+	public int minValue = 0;
+
+	//default value of slider
+	int val = 50;
+
+	//following time variables used for making the slider disappear after a couple seconds. There's a better way of doing this
 	double startingtime;
 	double heldTimeA;
 	double heldTimeB;
 	double belowThresholdTime;
 	bool belowThreshold = false;
-	static public int sceneCount = 0;
-	bool isActive;
-	public int maxValue = 100;
-	public int minValue = 0;
-	int val = 50;
+
+	//scene count used for logging purposes
+	public int sceneCount = 0;
+
+	//current text in patient's file (GlobalVariables.Filename returns directory to file in desktop)
 	string fileText = System.IO.File.ReadAllText(GlobalVariables.Filename);
+
+
 	List<int> tempStats = new List<int>();
 	static public bool isRandomized = false;
 	static public string[] copyOfScenesArray = new string[GlobalVariables.Scenes.Length];
@@ -75,6 +101,7 @@ public class ToggleSlider : MonoBehaviour {
 		slider.value = val;
 		isActive = true;
 	}
+
 	//called every 2 seconds to log current anxiety level to file.
 	public void LogToFile(){
 		tempStats.Add(Convert.ToInt32(Math.Round(slider.value)));
@@ -95,6 +122,7 @@ public class ToggleSlider : MonoBehaviour {
 		System.Random rnd=new System.Random();
 		return GlobalVariables.Scenes.OrderBy(x => rnd.Next()).ToArray();
 	}
+
 	// Use this for initialization
 	void Start () {
 		scene = SceneManager.GetActiveScene();
@@ -118,6 +146,8 @@ public class ToggleSlider : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+
+		/* 1. Handles Oculus touch input and incrementing/decrementing anxiety value */
 		if(OVRInput.GetDown(OVRInput.Button.One)){
 			heldTimeA = ConvertToUnixTimestamp(DateTime.Now);
 			toggleAndIncrement();
@@ -136,11 +166,14 @@ public class ToggleSlider : MonoBehaviour {
 				toggleAndDecrement();
 			}
 		}
+		/* 2. Handles disabling canvas if it's active */
 		if(isActive && ConvertToUnixTimestamp(DateTime.Now) - startingtime >= 5){
         	canvas.SetActive(false);
         	isActive = false;
 		}
 
+
+		/* 3. Following code is solely used for tutorial scene, should move it out of Update() lol */
 		if(sceneCount == 0 && stepOne){
 			if(val < 100){
 				belowThresholdTutorial = true;
@@ -171,32 +204,45 @@ public class ToggleSlider : MonoBehaviour {
 		else {
 			TutorialDone = true;
 		}
-		if(TutorialDone){
+
+		/* 4. This section is for transitioning scene if slider has been under a threshold for a while */
+		/* Definitely needs refactoring */
+
+		if(TutorialDone)
+		{
+
 			//scene transitioning
-			if(val >= threshold){
+			if(val >= threshold)
+			{
 				belowThreshold = false;
 			}
-			if(val < threshold && !belowThreshold){
+			if(val < threshold && !belowThreshold)
+			{
 					belowThresholdTime = ConvertToUnixTimestamp(DateTime.Now);
 					belowThreshold = true;
 			}
-			if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTime >= GlobalVariables.TimeTillNextScene && belowThreshold){
+			if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTime >= GlobalVariables.TimeTillNextScene && belowThreshold)
+			{
 				if(scene.name != "Tutorial" && scene.name != "Welcome")
 				{
 					string average = AverageAnxietyLevels();
-					if(!done){
+					if(!done)
+					{
 						fileText = fileText.Substring(0, fileText.Length-1) + copyOfScenesArray[sceneCount] + "," + average;
 					}
 					System.IO.File.WriteAllText(GlobalVariables.Filename, fileText);
 					sceneCount++;
 				}
-				if(sceneCount >= copyOfScenesArray.Length || sceneCount < 0){
+				if(sceneCount >= copyOfScenesArray.Length || sceneCount < 0)
+				{
 					done = true;
 				}
-				if(done){
+				if(done)
+				{
 					SceneManager.LoadScene("Goodbye");
 				}
-				else{
+				else
+				{
 					SceneManager.LoadScene(copyOfScenesArray[sceneCount]);
 				}
 

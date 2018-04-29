@@ -126,15 +126,14 @@ public class ToggleSlider : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		scene = SceneManager.GetActiveScene();
-		sceneCount = Array.IndexOf(copyOfScenesArray, scene.name) + 1;
-		Debug.Log(scene.name);
+		/*sceneCount = Array.IndexOf(copyOfScenesArray, scene.name) + 1;
 		if(!isRandomized){
 			copyOfScenesArray = randomizeScenes();
 			isRandomized = true;
 			for(int i = 0; i < copyOfScenesArray.Length; i++){
 				Debug.Log(copyOfScenesArray[i]);
 			}
-		}
+		}*/
 		tempStats.Clear();
 		if(scene.name != "Tutorial" && scene.name != "Welcome"){
 			InvokeRepeating("LogToFile", 1.0f, GlobalVariables.SampleRate);
@@ -157,7 +156,8 @@ public class ToggleSlider : MonoBehaviour {
 
 		//keyboard shortcut to skip tutorial
 		if(Input.GetKey("9") && scene.name == "Tutorial"){
-			TutorialDone = true;
+			GlobalVariables.tutorialDone = true;
+			Debug.Log("set tutorialDone to " + GlobalVariables.tutorialDone);
 		}
 
 		/* 1. Handles Oculus touch input and incrementing/decrementing anxiety value */
@@ -215,51 +215,9 @@ public class ToggleSlider : MonoBehaviour {
 			}
 		}
 		else {
-			TutorialDone = true;
+			GlobalVariables.tutorialDone = true;
 		}
 
-		/* 4. This section is for transitioning scene if slider has been under a threshold for a while */
-		/* Definitely needs refactoring */
-
-		if(TutorialDone)
-		{
-
-			//scene transitioning
-			if(val >= threshold)
-			{
-				belowThreshold = false;
-			}
-			if(val < threshold && !belowThreshold)
-			{
-					belowThresholdTime = ConvertToUnixTimestamp(DateTime.Now);
-					belowThreshold = true;
-			}
-			if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTime >= GlobalVariables.TimeTillNextScene && belowThreshold)
-			{
-				if(scene.name != "Tutorial" && scene.name != "Welcome")
-				{
-					string average = AverageAnxietyLevels();
-					if(!done)
-					{
-						fileText = fileText.Substring(0, fileText.Length-1) + copyOfScenesArray[sceneCount-1] + "," + average;
-					}
-					System.IO.File.WriteAllText(GlobalVariables.Filename, fileText);
-				}
-				if(sceneCount >= copyOfScenesArray.Length || sceneCount < 0)
-				{
-					done = true;
-				}
-				if(done)
-				{
-					SceneManager.LoadScene("Goodbye");
-				}
-				else
-				{
-					SceneManager.LoadScene(copyOfScenesArray[sceneCount]);
-				}
-
-			}
-		}
 	}
 
 }

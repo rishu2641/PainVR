@@ -7,6 +7,7 @@ using System;
 
 public static class GlobalVariables
 {
+
     //Initialize array of scenes here:
    public static string[] scenes = {"apple-1-supermarket", "apple-2-supermarket", "apple-3-cafeteria", "apple-4-cafeteria", "apple-5-cafeteria","apple-6-cafeteria","cheese-1-supermarket"};
 
@@ -37,6 +38,8 @@ public static class GlobalVariables
             { "apple-6-cafeteria", "Engaged in conversation with your coworker, you decide to eat your apple." },
             { "cheese-1-supermarket", "During your grocery shopping, you arrive at the cheese aisle. Take a look!" },
         };
+
+    public static bool tutorialDone = false;
     //call GlobalVariables.Filename to return path+filename
     public static string Filename 
     {

@@ -39,7 +39,14 @@ public static class GlobalVariables
             { "cheese-1-supermarket", "During your grocery shopping, you arrive at the cheese aisle. Take a look!" },
         };
 
+    //global flag that represents whether or not the user has finished Tutorial.cs
     public static bool tutorialDone = false;
+
+    //exact time when user enters first scene of experience
+    public static double startTime = 0;
+
+    //value of slider
+    public static float sliderValue = 0;
     //call GlobalVariables.Filename to return path+filename
     public static string Filename 
     {

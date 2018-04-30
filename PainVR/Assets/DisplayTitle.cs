@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 using System;
 using System.Linq;
 
+
+/* Although this class is vaguely called DisplayTitle, it really handles the timing logic for progressing through scenes in a new user's first go at OPAL */
+
 public class DisplayTitle : MonoBehaviour {
 
 	public GameObject SceneTitleCanvas;
@@ -39,9 +42,6 @@ public class DisplayTitle : MonoBehaviour {
 		if(!isRandomized){
 			copyOfScenesArray = randomizeScenes();
 			isRandomized = true;
-			for(int i = 0; i < copyOfScenesArray.Length; i++){
-				Debug.Log(copyOfScenesArray[i]);
-			}
 		}
 		sceneCount = Array.IndexOf(copyOfScenesArray, scene.name) + 1;
 		//fetch the instruction text from GlobalVariables.cs
@@ -53,7 +53,8 @@ public class DisplayTitle : MonoBehaviour {
 	}
 	
 	public void RateAtTenSeconds(){
-		//log to file needs to be here
+		//log anxiety value when prompt to rate anxiety appears Math.Floor(Time.time - GlobalVariables.startTime)
+		GlobalFunction.LogToPatientFile(GlobalVariables.Filename, scene.name, "At 10 Seconds", GlobalVariables.sliderValue);
 		prompted = true;
 		AnxietyReminder.SetActive(true);
 		
@@ -62,11 +63,13 @@ public class DisplayTitle : MonoBehaviour {
 	public void changeFlags(){
 		ratedInitialAnxiety = true;
 		instruction.text = "Press either <b>Trigger</b> to begin.";
-		//log to file needs to be here
+		GlobalFunction.LogToPatientFile(GlobalVariables.Filename, scene.name, "Initial", GlobalVariables.sliderValue);
 	}
 
 	public void LogAndTransition(){
-		//log to file needs to be here
+		//log to file
+		GlobalFunction.LogToPatientFile(GlobalVariables.Filename, scene.name, "Final", GlobalVariables.sliderValue);
+
 		if(sceneCount < 0 || sceneCount >= copyOfScenesArray.Length)
 		{
 			SceneManager.LoadScene("Goodbye");
@@ -76,20 +79,16 @@ public class DisplayTitle : MonoBehaviour {
 		SceneManager.LoadScene(copyOfScenesArray[sceneCount]);
 		}
 	}
-	// Update is called once per frame
-	void Update () {
-		//if anxiety slider is manipulated, wait five seconds then call changeFlags(), which changes instruction text and marks initialanxiety as true.
-		
+
+	void Update () {		
 		if(scene.name != "Tutorial"){
 			if((OVRInput.GetDown(OVRInput.Button.One) || OVRInput.GetDown(OVRInput.Button.Two) || Input.GetKey("2") || Input.GetKey("1")) && !invoked){
-				Debug.Log("rated initial");
 				Invoke("changeFlags", 5);
 				invoked = true;
 			}
 			//then, if ratedInitialAnxiety & the trigger buttons are pressed, mark pressedTrigger as true
 			if((OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger) || Input.GetKey("9")) && ratedInitialAnxiety){
 				pressedTrigger = true;
-				Debug.Log("pressed trigger");
 			}
 			
 			//if !pressedtrigger and !ratedinitialanxiety, keep the player at the current position
@@ -101,17 +100,13 @@ public class DisplayTitle : MonoBehaviour {
 			else{
 				closeCanvas();
 				if(!invokedb){
-					Debug.Log("canvas closed, invoked RateAtTenSeconds");
 					Invoke("RateAtTenSeconds",10);
 					invokedb = true;
 				}
 				if(invokedb && prompted){
-					Debug.Log("prompted to rate anxiety during RateAtTenSeconds");
 					if(OVRInput.GetDown(OVRInput.Button.One) || OVRInput.GetDown(OVRInput.Button.Two) || Input.GetKey("2") || Input.GetKey("1")){
 						AnxietyReminder.SetActive(false);
-						//invoke some kind of timer for 20 seconds to log first, then go to next scene
 						Invoke("LogAndTransition",20);
-						Debug.Log("invoked LogAndTransition");
 					}
 				}
 				return;
@@ -120,6 +115,7 @@ public class DisplayTitle : MonoBehaviour {
 		else
 		{
 			if(GlobalVariables.tutorialDone){
+				GlobalVariables.startTime = Math.Floor(Time.time);
 				SceneManager.LoadScene(copyOfScenesArray[sceneCount]);
 			}
 		}

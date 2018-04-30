@@ -18,8 +18,9 @@ public class InitializePatientFile : MonoBehaviour {
 		if(patientName.Trim() != ""){
 			patientName = patientName.Trim().Replace(" ", "_");
 			string strPath = Environment.GetFolderPath(
-                         System.Environment.SpecialFolder.DesktopDirectory);
+                         System.Environment.SpecialFolder.DesktopDirectory) + "\\OPAL_Testing";
 	 		patientFile = strPath + "\\Patient_" + patientName + "_Shuffled_OPAL_Testing.csv";
+	 		System.IO.Directory.CreateDirectory(strPath);
 	 		GlobalVariables.Filename = patientFile;
 	 		GlobalVariables.Patientname = patientName;
 	 		System.IO.File.WriteAllText(patientFile, 

@@ -22,10 +22,10 @@ public class InitializePatientFile : MonoBehaviour {
 	 		patientFile = strPath + "\\Patient_" + patientName + "_Shuffled_OPAL_Testing.csv";
 	 		System.IO.Directory.CreateDirectory(strPath);
 	 		GlobalVariables.Filename = patientFile;
+	 		GlobalVariables.savefilename = strPath + "\\" + patientName + "_save.txt";
 	 		GlobalVariables.Patientname = patientName;
 	 		System.IO.File.WriteAllText(patientFile, 
-	 									"Patient's Name:,"+patientName+",,,\n" + ",,,,\n" + "Time,Scene,Anxiety Level,Scene, Average Anxiety Level");
-			
+	 									"Patient's Name:,"+patientName+",,\n" + ",,,\n" + "Description,Time,Scene,Anxiety Level");
 			SceneManager.LoadScene("Welcome");
 		}
 	}

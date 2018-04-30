@@ -17,6 +17,9 @@ public static class GlobalVariables
 
     //filename of patient's shuffled .csv
     private static string filename = strPath + "\\Patient_Default_Shuffled_OPAL_Testing.csv";
+
+    //filename of patient's save .txt
+    public static string savefilename = strPath + "\\default_save.txt";
     
     //patient name
     private static string patientname;
@@ -44,6 +47,9 @@ public static class GlobalVariables
 
     //exact time when user enters first scene of experience
     public static double startTime = 0;
+
+    //list that ranks scenes in order of least anxious -> most anxious by final anxiety level
+    public static Dictionary<string, float> scenesRank = new Dictionary<string, float>();
 
     //value of slider
     public static float sliderValue = 0;

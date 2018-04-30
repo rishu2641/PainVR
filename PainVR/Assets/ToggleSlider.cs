@@ -103,12 +103,12 @@ public class ToggleSlider : MonoBehaviour {
 	}
 
 	//called every 2 seconds to log current anxiety level to file.
-	public void LogToFile(){
+	/*public void LogToFile(){
 		tempStats.Add(Convert.ToInt32(Math.Round(slider.value)));
 		if(!done){
 			fileText += "\n" + Math.Floor(Time.time) + "," + copyOfScenesArray[sceneCount-1] + "," + slider.value + ",,";
 		}
-	}
+	}*/
 
 	public string AverageAnxietyLevels(){
 		double sum = 0;

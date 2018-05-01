@@ -9,7 +9,7 @@ public static class GlobalVariables
 {
 
     //Initialize array of scenes here:
-   public static string[] scenes = {"apple-1-supermarket", "apple-2-supermarket", "apple-3-cafeteria", "apple-4-cafeteria", "apple-5-cafeteria","apple-6-cafeteria","cheese-1-supermarket"};
+   public static string[] scenes = {"apple-1-supermarket", "apple-2-supermarket", "apple-3-cafeteria", "apple-4-cafeteria", "apple-5-cafeteria","apple-6-cafeteria"};
 
     //strPath holds path to user's desktop
     private static string strPath = Environment.GetFolderPath(
@@ -39,7 +39,6 @@ public static class GlobalVariables
             { "apple-4-cafeteria", "Good to see your coworkers eating healthy. How do you feel about their choice?" },
             { "apple-5-cafeteria", "You're sitting down to eat with your coworker. Hope you don't mind the crunch!" },
             { "apple-6-cafeteria", "Engaged in conversation with your coworker, you decide to eat your apple." },
-            { "cheese-1-supermarket", "During your grocery shopping, you arrive at the cheese aisle. Take a look!" },
         };
 
     //global flag that represents whether or not the user has finished Tutorial.cs

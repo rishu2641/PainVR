@@ -64,7 +64,6 @@ public class DisplayTitle : MonoBehaviour {
 	public void changeFlags(){
 		ratedInitialAnxiety = true;
 		instruction.text = "Press either <b>Trigger</b> to begin.";
-		GlobalFunction.LogToPatientFile(GlobalVariables.Filename, scene.name, "Initial", Math.Floor(Time.time - GlobalVariables.startTime), GlobalVariables.sliderValue);
 	}
 
 	public string[] orderByHierarchy(string[] scenes){
@@ -129,12 +128,13 @@ public class DisplayTitle : MonoBehaviour {
 	void Update () {		
 		if(scene.name != "Tutorial"){
 			if((OVRInput.GetDown(OVRInput.Button.One) || OVRInput.GetDown(OVRInput.Button.Two) || Input.GetKey("2") || Input.GetKey("1")) && !invoked){
-				Invoke("changeFlags", 5);
+				Invoke("changeFlags", 2);
 				invoked = true;
 			}
 			//then, if ratedInitialAnxiety & the trigger buttons are pressed, mark pressedTrigger as true
-			if((OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger) || Input.GetKey("9")) && ratedInitialAnxiety){
+			if((OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger) || Input.GetKey("9")) && ratedInitialAnxiety && !pressedTrigger){
 				pressedTrigger = true;
+				GlobalFunction.LogToPatientFile(GlobalVariables.Filename, scene.name, "Initial", Math.Floor(Time.time - GlobalVariables.startTime), GlobalVariables.sliderValue);
 			}
 			
 			//if !pressedtrigger and !ratedinitialanxiety, keep the player at the current position

@@ -22,6 +22,9 @@ public class WelcomeBoard : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if(Input.GetKey("1")){
+			SceneManager.LoadScene("Tutorial");
+		}
 		if(done && Time.time - doneTime >= transitionTimes){
 			SceneManager.LoadScene("Tutorial");
 		}

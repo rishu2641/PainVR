@@ -51,6 +51,7 @@ public class DisplayTitle : MonoBehaviour {
 			title.text = GlobalVariables.SceneInstructions[scene.name];
 			//set instruction text
 			instruction.text = "Please <b>rate your initial anxiety</b> level now.";
+			instruction.fontSize = 12;
 			//fetch the player's position
 			pos = player.transform.position;
 		}
@@ -59,7 +60,9 @@ public class DisplayTitle : MonoBehaviour {
 			scene = SceneManager.GetActiveScene();
 			sceneCount = Array.IndexOf(GlobalVariables.existingSceneOrder, scene.name) + 1;
 			title.text = GlobalVariables.SceneInstructions[scene.name];
-			instruction.text = "Press either <b>Trigger</b> to begin.";
+			instruction.text = "<b>Press either Trigger to begin.</b>";
+			instruction.fontSize = 16;
+
 		}
 	}
 	
@@ -73,7 +76,8 @@ public class DisplayTitle : MonoBehaviour {
 
 	public void changeFlags(){
 		ratedInitialAnxiety = true;
-		instruction.text = "Press either <b>Trigger</b> to begin.";
+		instruction.text = "<b>Press either Trigger to begin.</b>";
+		instruction.fontSize = 16;
 	}
 
 	public string[] orderByHierarchy(string[] scenes){

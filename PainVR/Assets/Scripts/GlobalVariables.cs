@@ -44,6 +44,15 @@ public static class GlobalVariables
     //global flag that represents whether or not the user has finished Tutorial.cs
     public static bool tutorialDone = false;
 
+    //global flag that represents patient has existing save
+    public static bool isExisting = false;
+
+    //array that holds scene order for existing user
+    public static string[] existingSceneOrder = new string[scenes.Length];
+
+    //slider threshold to proceed to next scene for existing users
+    public static float existingThreshold = 15.0f;
+
     //exact time when user enters first scene of experience
     public static double startTime = 0;
 
@@ -51,7 +60,7 @@ public static class GlobalVariables
     public static Dictionary<string, float> scenesRank = new Dictionary<string, float>();
 
     //value of slider
-    public static float sliderValue = 0;
+    public static float sliderValue = 0f;
     //call GlobalVariables.Filename to return path+filename
     public static string Filename 
     {

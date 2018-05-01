@@ -38,19 +38,29 @@ public class DisplayTitle : MonoBehaviour {
 	}
 	// Use this for initialization
 	void Start () {
-		//fetch the current scene
-		scene = SceneManager.GetActiveScene();
-		if(!isRandomized){
-			copyOfScenesArray = randomizeScenes();
-			isRandomized = true;
+		//not existing patient
+		if(!GlobalVariables.isExisting){
+			//fetch the current scene
+			scene = SceneManager.GetActiveScene();
+			if(!isRandomized){
+				copyOfScenesArray = randomizeScenes();
+				isRandomized = true;
+			}
+			sceneCount = Array.IndexOf(copyOfScenesArray, scene.name) + 1;
+			//fetch the instruction text from GlobalVariables.cs
+			title.text = GlobalVariables.SceneInstructions[scene.name];
+			//set instruction text
+			instruction.text = "Please <b>rate your initial anxiety</b> level now.";
+			//fetch the player's position
+			pos = player.transform.position;
 		}
-		sceneCount = Array.IndexOf(copyOfScenesArray, scene.name) + 1;
-		//fetch the instruction text from GlobalVariables.cs
-		title.text = GlobalVariables.SceneInstructions[scene.name];
-		//set instruction text
-		instruction.text = "Please <b>rate your initial anxiety</b> level now.";
-		//fetch the player's position
-		pos = player.transform.position;
+		//existing patient
+		else{
+			scene = SceneManager.GetActiveScene();
+			sceneCount = Array.IndexOf(GlobalVariables.existingSceneOrder, scene.name) + 1;
+			title.text = GlobalVariables.SceneInstructions[scene.name];
+			instruction.text = "Press either <b>Trigger</b> to begin.";
+		}
 	}
 	
 	public void RateAtTenSeconds(){
@@ -125,45 +135,77 @@ public class DisplayTitle : MonoBehaviour {
 		}
 	}
 
+	public void proceedToNextScene(){
+		if(GlobalVariables.sliderValue <= GlobalVariables.existingThreshold){
+			if(sceneCount < 0 || sceneCount >= GlobalVariables.existingSceneOrder.Length)
+			{
+				SceneManager.LoadScene("Goodbye");
+			}
+			else
+			{
+
+				SceneManager.LoadScene(GlobalVariables.existingSceneOrder[sceneCount]);
+			}
+		}
+	}
+
 	void Update () {		
 		if(scene.name != "Tutorial"){
-			if((OVRInput.GetDown(OVRInput.Button.One) || OVRInput.GetDown(OVRInput.Button.Two) || Input.GetKey("2") || Input.GetKey("1")) && !invoked){
-				Invoke("changeFlags", 2);
-				invoked = true;
-			}
-			//then, if ratedInitialAnxiety & the trigger buttons are pressed, mark pressedTrigger as true
-			if((OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger) || Input.GetKey("9")) && ratedInitialAnxiety && !pressedTrigger){
-				pressedTrigger = true;
-				GlobalFunction.LogToPatientFile(GlobalVariables.Filename, scene.name, "Initial", Math.Floor(Time.time - GlobalVariables.startTime), GlobalVariables.sliderValue);
-			}
-			
-			//if !pressedtrigger and !ratedinitialanxiety, keep the player at the current position
-			if(!(pressedTrigger && ratedInitialAnxiety))
-			{
-				player.transform.position = pos;
-			}
-			//else, closecanvas.
-			else{
-				closeCanvas();
-				if(!invokedb){
-					Invoke("RateAtTenSeconds",10);
-					invokedb = true;
+			if(!GlobalVariables.isExisting){
+
+				if((OVRInput.GetDown(OVRInput.Button.One) || OVRInput.GetDown(OVRInput.Button.Two) || Input.GetKey("2") || Input.GetKey("1")) && !invoked){
+					Invoke("changeFlags", 2);
+					invoked = true;
 				}
-				if(invokedb && prompted && !flag){
-					if(OVRInput.GetDown(OVRInput.Button.One) || OVRInput.GetDown(OVRInput.Button.Two) || Input.GetKey("2") || Input.GetKey("1")){
-						AnxietyReminder.SetActive(false);
-						Invoke("LogAndTransition",15);
-						flag = true;
+				//then, if ratedInitialAnxiety & the trigger buttons are pressed, mark pressedTrigger as true
+				if((OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger) || Input.GetKey("9")) && ratedInitialAnxiety && !pressedTrigger){
+					pressedTrigger = true;
+					GlobalFunction.LogToPatientFile(GlobalVariables.Filename, scene.name, "Initial", Math.Floor(Time.time - GlobalVariables.startTime), GlobalVariables.sliderValue);
+				}
+				
+				//if !pressedtrigger and !ratedinitialanxiety, keep the player at the current position
+				if(!(pressedTrigger && ratedInitialAnxiety))
+				{
+					player.transform.position = pos;
+				}
+				//else, closecanvas.
+				else{
+					closeCanvas();
+					if(!invokedb){
+						Invoke("RateAtTenSeconds",10);
+						invokedb = true;
 					}
+					if(invokedb && prompted && !flag){
+						if(OVRInput.GetDown(OVRInput.Button.One) || OVRInput.GetDown(OVRInput.Button.Two) || Input.GetKey("2") || Input.GetKey("1")){
+							AnxietyReminder.SetActive(false);
+							Invoke("LogAndTransition",15);
+							flag = true;
+						}
+					}
+					return;
 				}
-				return;
+			}
+			else{
+				if(OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger) || Input.GetKey("9")){
+					closeCanvas();
+				}
+				if(GlobalVariables.sliderValue <= GlobalVariables.existingThreshold){
+					Invoke("proceedToNextScene",10);
+				}
 			}
 		}
 		else
 		{
 			if(GlobalVariables.tutorialDone){
-				GlobalVariables.startTime = Math.Floor(Time.time);
-				SceneManager.LoadScene(copyOfScenesArray[sceneCount]);
+				//not existing patient
+				if(!GlobalVariables.isExisting){
+					GlobalVariables.startTime = Math.Floor(Time.time);
+					SceneManager.LoadScene(copyOfScenesArray[sceneCount]);
+				}
+				else{
+					GlobalVariables.startTime = Math.Floor(Time.time);
+					SceneManager.LoadScene(GlobalVariables.existingSceneOrder[sceneCount]);
+				}
 			}
 		}
 	}

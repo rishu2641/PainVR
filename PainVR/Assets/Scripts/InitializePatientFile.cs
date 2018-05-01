@@ -18,13 +18,14 @@ public class InitializePatientFile : MonoBehaviour {
 		if(patientName.Trim() != ""){
 			patientName = patientName.Trim().Replace(" ", "_");
 			string strPath = Environment.GetFolderPath(
-                         System.Environment.SpecialFolder.DesktopDirectory);
+                         System.Environment.SpecialFolder.DesktopDirectory) + "\\OPAL_Testing";
 	 		patientFile = strPath + "\\Patient_" + patientName + "_Shuffled_OPAL_Testing.csv";
+	 		System.IO.Directory.CreateDirectory(strPath);
 	 		GlobalVariables.Filename = patientFile;
+	 		GlobalVariables.savefilename = strPath + "\\" + patientName + "_save.txt";
 	 		GlobalVariables.Patientname = patientName;
 	 		System.IO.File.WriteAllText(patientFile, 
-	 									"Patient's Name:,"+patientName+",,,\n" + ",,,,\n" + "Time,Scene,Anxiety Level,Scene, Average Anxiety Level");
-			
+	 									"Patient's Name:,"+patientName+",,\n" + ",,,\n" + "Description,Time,Scene,Anxiety Level");
 			SceneManager.LoadScene("Welcome");
 		}
 	}

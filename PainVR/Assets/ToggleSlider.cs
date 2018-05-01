@@ -6,8 +6,6 @@ using System;
 using System.Linq;
 using UnityEngine.SceneManagement;
 
-/* We apologize in advance for not separating some of this functionality */
-
 public class ToggleSlider : MonoBehaviour {
 
 	/* Global variables needed for Tutorial scene */
@@ -54,16 +52,6 @@ public class ToggleSlider : MonoBehaviour {
 	double belowThresholdTime;
 	bool belowThreshold = false;
 
-	//scene count
-	public int sceneCount = 0;
-
-	//current text in patient's file (GlobalVariables.Filename returns directory to file in desktop)
-	string fileText = System.IO.File.ReadAllText(GlobalVariables.Filename);
-
-
-	List<int> tempStats = new List<int>();
-	static public bool isRandomized = false;
-	static public string[] copyOfScenesArray = new string[GlobalVariables.Scenes.Length];
 	public Scene scene;
 
 
@@ -102,51 +90,17 @@ public class ToggleSlider : MonoBehaviour {
 		isActive = true;
 	}
 
-	//called every 2 seconds to log current anxiety level to file.
-	/*public void LogToFile(){
-		tempStats.Add(Convert.ToInt32(Math.Round(slider.value)));
-		if(!done){
-			fileText += "\n" + Math.Floor(Time.time) + "," + copyOfScenesArray[sceneCount-1] + "," + slider.value + ",,";
-		}
-	}*/
-
-	public string AverageAnxietyLevels(){
-		double sum = 0;
-		for (int i = 0; i < tempStats.Count; i++){
-			sum += tempStats[i];
-		}
-		return Math.Floor(sum/tempStats.Count).ToString();
-	}
-
-	public string[] randomizeScenes(){
-		System.Random rnd=new System.Random();
-		return GlobalVariables.Scenes.OrderBy(x => rnd.Next()).ToArray();
-	}
 
 	// Use this for initialization
 	void Start () {
-		scene = SceneManager.GetActiveScene();
-		sceneCount = Array.IndexOf(copyOfScenesArray, scene.name) + 1;
-		Debug.Log(scene.name);
-		if(!isRandomized){
-			copyOfScenesArray = randomizeScenes();
-			isRandomized = true;
-			for(int i = 0; i < copyOfScenesArray.Length; i++){
-				Debug.Log(copyOfScenesArray[i]);
-			}
-		}
-		tempStats.Clear();
-		if(scene.name != "Tutorial" && scene.name != "Welcome"){
-			InvokeRepeating("LogToFile", 1.0f, GlobalVariables.SampleRate);
-			Debug.Log("started logging");
-		}
+		scene = SceneManager.GetActiveScene();		
 		slider.value = 50;
 		belowThresholdTutorial	= true;
 	}
 
 	// Update is called once per frame
 	void Update () {
-			
+		GlobalVariables.sliderValue = slider.value;
 		//keyboard shortcuts to manipulate anxiety slider
 		if(Input.GetKey("1")){
 			toggleAndIncrement();
@@ -157,7 +111,7 @@ public class ToggleSlider : MonoBehaviour {
 
 		//keyboard shortcut to skip tutorial
 		if(Input.GetKey("9") && scene.name == "Tutorial"){
-			TutorialDone = true;
+			GlobalVariables.tutorialDone = true;
 		}
 
 		/* 1. Handles Oculus touch input and incrementing/decrementing anxiety value */
@@ -215,51 +169,9 @@ public class ToggleSlider : MonoBehaviour {
 			}
 		}
 		else {
-			TutorialDone = true;
+			GlobalVariables.tutorialDone = true;
 		}
 
-		/* 4. This section is for transitioning scene if slider has been under a threshold for a while */
-		/* Definitely needs refactoring */
-
-		if(TutorialDone)
-		{
-
-			//scene transitioning
-			if(val >= threshold)
-			{
-				belowThreshold = false;
-			}
-			if(val < threshold && !belowThreshold)
-			{
-					belowThresholdTime = ConvertToUnixTimestamp(DateTime.Now);
-					belowThreshold = true;
-			}
-			if(ConvertToUnixTimestamp(DateTime.Now) - belowThresholdTime >= GlobalVariables.TimeTillNextScene && belowThreshold)
-			{
-				if(scene.name != "Tutorial" && scene.name != "Welcome")
-				{
-					string average = AverageAnxietyLevels();
-					if(!done)
-					{
-						fileText = fileText.Substring(0, fileText.Length-1) + copyOfScenesArray[sceneCount-1] + "," + average;
-					}
-					System.IO.File.WriteAllText(GlobalVariables.Filename, fileText);
-				}
-				if(sceneCount >= copyOfScenesArray.Length || sceneCount < 0)
-				{
-					done = true;
-				}
-				if(done)
-				{
-					SceneManager.LoadScene("Goodbye");
-				}
-				else
-				{
-					SceneManager.LoadScene(copyOfScenesArray[sceneCount]);
-				}
-
-			}
-		}
 	}
 
 }

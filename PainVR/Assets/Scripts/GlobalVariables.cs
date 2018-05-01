@@ -7,6 +7,7 @@ using System;
 
 public static class GlobalVariables
 {
+
     //Initialize array of scenes here:
    public static string[] scenes = {"apple-1-supermarket", "apple-2-supermarket", "apple-3-cafeteria", "apple-4-cafeteria", "apple-5-cafeteria","apple-6-cafeteria","cheese-1-supermarket"};
 
@@ -16,6 +17,9 @@ public static class GlobalVariables
 
     //filename of patient's shuffled .csv
     private static string filename = strPath + "\\Patient_Default_Shuffled_OPAL_Testing.csv";
+
+    //filename of patient's save .txt
+    public static string savefilename = strPath + "\\default_save.txt";
     
     //patient name
     private static string patientname;
@@ -37,6 +41,18 @@ public static class GlobalVariables
             { "apple-6-cafeteria", "Engaged in conversation with your coworker, you decide to eat your apple." },
             { "cheese-1-supermarket", "During your grocery shopping, you arrive at the cheese aisle. Take a look!" },
         };
+
+    //global flag that represents whether or not the user has finished Tutorial.cs
+    public static bool tutorialDone = false;
+
+    //exact time when user enters first scene of experience
+    public static double startTime = 0;
+
+    //list that ranks scenes in order of least anxious -> most anxious by final anxiety level
+    public static Dictionary<string, float> scenesRank = new Dictionary<string, float>();
+
+    //value of slider
+    public static float sliderValue = 0;
     //call GlobalVariables.Filename to return path+filename
     public static string Filename 
     {

@@ -168,8 +168,10 @@ public class ToggleSlider : MonoBehaviour {
 				TutorialDone = true;
 			}
 		}
-		else {
-			GlobalVariables.tutorialDone = true;
+		if(TutorialDone){
+			if(val <= 0){
+				GlobalVariables.tutorialDone = true;
+			}
 		}
 
 	}
